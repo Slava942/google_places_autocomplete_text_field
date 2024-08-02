@@ -33,7 +33,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final _yourGoogleAPIKey = 'AIzaSyAD8bgi8uHayav0uNe7bhFhPzITw6mNtjQ';
 
 
   final _textController = TextEditingController();
