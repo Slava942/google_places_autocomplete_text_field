@@ -33,10 +33,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final _yourGoogleAPIKey = 'foo-bar-baz';
+  final _yourGoogleAPIKey = 'AIzaSyAD8bgi8uHayav0uNe7bhFhPzITw6mNtjQ';
 
-  // only needed if you build for the web
-  final _yourProxyURL = 'https://your-proxy.com/';
 
   final _textController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -58,7 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
               autovalidateMode: _autovalidateMode,
               child: GooglePlacesAutoCompleteTextFormField(
                 textEditingController: _textController,
-                googleAPIKey: _yourGoogleAPIKey,
+                googleAPIKey: 'AIzaSyAD8bgi8uHayav0uNe7bhFhPzITw6mNtjQ',
                 decoration: const InputDecoration(
                   hintText: 'Enter your address',
                   labelText: 'Address',

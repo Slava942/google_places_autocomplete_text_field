@@ -241,41 +241,43 @@ class _GooglePlacesAutoCompleteTextFormFieldState
     );
   }
 
-  Future<void> getLocation(String text) async {
-    final prefix = widget.proxyURL ?? "";
-    String url =
-        "${prefix}https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$text&key=${widget.googleAPIKey}";
+Future<void> getLocation(String text, String locationCode) async {
+  final prefix = widget.proxyURL ?? "";
+  String url =
+      "${prefix}https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$text&key=${widget.googleAPIKey}&components=country:$locationCode";
 
-    if (widget.countries != null) {
-      for (int i = 0; i < widget.countries!.length; i++) {
-        final country = widget.countries![i];
+  final response = await _dio.get(url);
 
-        if (i == 0) {
-          url = "$url&components=country:$country";
-        } else {
-          url = "$url|country:$country";
-        }
-      }
-    }
-    final response = await _dio.get(url);
+  final subscriptionResponse =
+      PlacesAutocompleteResponse.fromJson(response.data);
 
-    final subscriptionResponse =
-        PlacesAutocompleteResponse.fromJson(response.data);
-
-    if (text.isEmpty) {
-      allPredictions.clear();
-      _overlayEntry!.remove();
-      return;
-    }
-
-    isSearched = false;
-    if (subscriptionResponse.predictions!.isNotEmpty) {
-      allPredictions.clear();
-      allPredictions.addAll(subscriptionResponse.predictions!);
-    }
+  if (text.isEmpty) {
+    allPredictions.clear();
+    _overlayEntry?.remove();
+    return;
   }
 
-  Future<void> textChanged(String text) async => getLocation(text).then(
+  isSearched = false;
+  if (subscriptionResponse.predictions!.isNotEmpty) {
+    allPredictions.clear();
+    allPredictions.addAll(subscriptionResponse.predictions!.map((prediction) {
+      prediction.description = prediction.description!.replaceAll(", Australia", "");
+      return prediction;
+    }).toList());
+    // Ensure the overlay is updated with the new predictions
+    if (_overlayEntry != null) {
+      _overlayEntry!.remove();
+    }
+    _overlayEntry = _createOverlayEntry();
+    Overlay.of(context).insert(_overlayEntry!);
+  } else {
+    if (_overlayEntry != null) {
+      _overlayEntry!.remove();
+    }
+  }
+}
+
+  Future<void> textChanged(String text) async => getLocation(text, 'au' ).then(
         (_) {
           _overlayEntry = null;
           _overlayEntry = _createOverlayEntry();
